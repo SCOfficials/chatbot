@@ -18,6 +18,19 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      flex-direction: column; /* Stack elements vertically */
+    }
+
+    .header {
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      position: absolute;
+      top: 0;
     }
 
     .chat-container {
@@ -29,6 +42,7 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
+      margin-top: 60px; /* Ensure chat-container doesn't overlap with header */
     }
 
     .chat-box {
@@ -88,6 +102,7 @@
   </style>
 </head>
 <body>
+  <div class="header">SC Officials</div>
   <div class="chat-container">
     <div class="chat-box" id="chat-box"></div>
     <div class="input-container">
@@ -95,6 +110,7 @@
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
+
   <script>
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
@@ -196,25 +212,25 @@
             if (responseType === 'short') {
               addMessageToChat(`I found something: ${result.title} - ${cleanedSnippet}`, 'bot-message');
             } else if (responseType === 'long') {
-              addMessageToChat(`I found something: ${result.title} - ${cleanedSnippet}... To read more, you can visit the [Wikipedia page](https://en.wikipedia.org/wiki/${encodeURIComponent(result.title)})`, 'bot-message');
+              addMessageToChat(`I found something: ${result.title} - ${cleanedSnippet}`, 'bot-message');
             } else {
-              addMessageToChat(`I found detailed information: ${result.title} - ${cleanedSnippet}... For more details, visit the [Wikipedia page](https://en.wikipedia.org/wiki/${encodeURIComponent(result.title)})`, 'bot-message');
+              addMessageToChat(cleanedSnippet, 'bot-message');
             }
           } else {
-            addMessageToChat('Sorry, I could not find any information on that topic.', 'bot-message');
+            addMessageToChat('Sorry, I couldn’t find anything relevant on that topic.', 'bot-message');
           }
         } else {
-          throw new Error('Failed to fetch data.');
+          addMessageToChat('Sorry, I couldn’t retrieve any information at the moment.', 'bot-message');
         }
       } catch (error) {
-        console.error('Error:', error);
-        addMessageToChat('Error: Could not fetch information. Please try again later.', 'bot-message');
+        addMessageToChat('Sorry, I couldn’t retrieve any information at the moment.', 'bot-message');
       }
     }
 
-    // Function to remove HTML tags from the snippet
-    function removeHTMLTags(str) {
-      return str.replace(/<\/?[^>]+(>|$)/g, "");  // Regular expression to remove HTML tags
+    // Remove HTML tags from text
+    function removeHTMLTags(text) {
+      const doc = new DOMParser().parseFromString(text, 'text/html');
+      return doc.body.textContent || "";
     }
   </script>
 </body>
