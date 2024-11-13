@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-box {
+      height: 350px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 5px;
+      background-color: #fafafa;
+    }
+
+    .input-container {
+      display: flex;
+      gap: 10px;
+    }
+
+    #user-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: 1px solid #007bff;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .user-message, .bot-message {
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .user-message {
+      text-align: right;
+      background-color: #d4f0fc;
+      color: #007bff;
+    }
+
+    .bot-message {
+      text-align: left;
+      background-color: #f1f1f1;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chat-box"></div>
+    <div class="input-container">
+      <input type="text" id="user-input" placeholder="Ask SCO Bot..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+
+    let responseType = 'detailed';  // Default response type is detailed
+
+    // Predefined responses and commands
+    const simpleResponses = {
+      'who are you': {
+        short: 'I am a chatbot created by SC Official.',
+        long: 'I am a chatbot created by SC Official to assist you with various tasks. I can answer your questions, provide information, and even tell jokes or interesting facts. My purpose is to make your experience more enjoyable and informative!',
+        detailed: 'I am an intelligent chatbot created by SC Official to assist users in answering questions, sharing knowledge, and providing useful information about a variety of topics, including technology, science, and more. Feel free to ask me anything!'
+      },
+      'who is your boss': {
+        short: 'SC Official is my boss.',
+        long: 'SC Official is a talented beginner web developer and coder. They are still learning and improving but have the passion and dedication to succeed in the world of web development. SC Official created me to assist you with any questions or tasks you may have!',
+        detailed: 'SC Official is a beginner web developer, passionate about coding and continuously learning. They are still at the early stages of their coding journey but have already created me, a chatbot, to assist you. SC Official believes in self-improvement and is eager to share their knowledge with others.'
+      },
+      'hello': {
+        short: 'Hello! How can I assist you today?',
+        long: 'Hello! It’s nice to meet you. How can I assist you today? Feel free to ask any question, whether it’s about web development, technology, or anything else. I’m here to help!',
+        detailed: 'Hello! I’m SCO Bot, here to help you with anything you need. Whether it’s answering your questions, helping with web development, or providing fun facts, I’m always ready to assist you. What can I do for you today?'
+      },
+      'hi': {
+        short: 'Hi! How can I help you?',
+        long: 'Hi there! I’m happy to help you today. Whether you need assistance with coding, web development, or just want to chat, feel free to ask your question. I’m here to assist!',
+        detailed: 'Hi! I’m SCO Bot, your friendly assistant. I’m here to help with anything you might need, from coding queries to fun facts. Just ask away, and I’ll do my best to provide helpful and informative responses!'
+      },
+      'contact': {
+        short: 'You can contact SC Official via this link: [SC Official Contact](https://www.scofficials.free.nf/contact/)',
+        long: 'If you need to reach out to SC Official, you can do so through their contact page. Just visit this link: [SC Official Contact](https://www.scofficials.free.nf/contact/). SC Official is always happy to hear from you!',
+        detailed: 'If you wish to contact SC Official, you can do so by visiting their official contact page. They are available for inquiries, support, or just to connect with like-minded individuals. You can find the contact link here: [SC Official Contact](https://www.scofficials.free.nf/contact/).'
+      }
+    };
+
+    // Send message
+    function sendMessage() {
+      const message = userInput.value;
+      if (message.trim() === '') return;
+
+      // Display user message
+      addMessageToChat(message, 'user-message');
+
+      // Clear input field
+      userInput.value = '';
+
+      // Get response
+      getResponse(message);
+    }
+
+    // Add message to chat box
+    function addMessageToChat(message, sender) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add(sender);
+      messageElement.textContent = message;
+      chatBox.appendChild(messageElement);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Get response from chatbot
+    function getResponse(query) {
+      const lowerCaseQuery = query.toLowerCase().trim();
+
+      if (lowerCaseQuery === 'long') {
+        responseType = 'long';
+        addMessageToChat('I will now give longer answers. Ask me anything!', 'bot-message');
+      } else if (lowerCaseQuery === 'short') {
+        responseType = 'short';
+        addMessageToChat('I will now give shorter answers. Ask me anything!', 'bot-message');
+      } else if (simpleResponses[lowerCaseQuery]) {
+        addMessageToChat(simpleResponses[lowerCaseQuery][responseType], 'bot-message');
+      } else {
+        // If not a predefined response, search the internet for info
+        searchInternet(query);
+      }
+    }
+
+    // Search the internet for information
+    async function searchInternet(query) {
+      addMessageToChat('Let me find that for you...', 'bot-message');
+
+      // Use a different CORS proxy
+      const corsProxy = 'https://api.allorigins.win/get?url=';
+      const wikipediaUrl = `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(query)}&utf8=`;
+
+      try {
+        const response = await fetch(corsProxy + encodeURIComponent(wikipediaUrl));
+        const data = await response.json();
+
+        // If a search result is found
+        if (data.contents) {
+          const parsedData = JSON.parse(data.contents);  // Parse the JSON response from AllOrigins
+          const searchResults = parsedData.query.search;
+
+          if (searchResults.length > 0) {
+            const result = searchResults[0];
+            const cleanedSnippet = removeHTMLTags(result.snippet);  // Clean up the snippet
+
+            if (responseType === 'short') {
+              addMessageToChat(`I found something: ${result.title} - ${cleanedSnippet}`, 'bot-message');
+            } else if (responseType === 'long') {
+              addMessageToChat(`I found something: ${result.title} - ${cleanedSnippet}... To read more, you can visit the [Wikipedia page](https://en.wikipedia.org/wiki/${encodeURIComponent(result.title)})`, 'bot-message');
+            } else {
+              addMessageToChat(`I found detailed information: ${result.title} - ${cleanedSnippet}... For more details, visit the [Wikipedia page](https://en.wikipedia.org/wiki/${encodeURIComponent(result.title)})`, 'bot-message');
+            }
+          } else {
+            addMessageToChat('Sorry, I could not find any information on that topic.', 'bot-message');
+          }
+        } else {
+          throw new Error('Failed to fetch data.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        addMessageToChat('Error: Could not fetch information. Please try again later.', 'bot-message');
+      }
+    }
+
+    // Function to remove HTML tags from the snippet
+    function removeHTMLTags(str) {
+      return str.replace(/<\/?[^>]+(>|$)/g, "");  // Regular expression to remove HTML tags
+    }
+  </script>
+</body>
+</html>
